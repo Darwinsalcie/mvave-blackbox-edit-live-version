@@ -8,8 +8,13 @@
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#0d0e14" />
+    <meta name="theme-color" content="#0c0d14" />
+    <meta name="description" content="Controlador y Editor en Vivo para M-Vave Blackbox" />
     <title>Blackbox Live Mode</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -280,6 +285,10 @@
               ⚡ VOL & DELAY
             </button>
           </div>
+          <button id="pwaInstallBtn" class="live-header-btn install-btn" style="display: none" title="Instalar Aplicación en tu Dispositivo">
+            <span class="btn-icon">📲</span>
+            <span class="btn-text">INSTALAR</span>
+          </button>
           <button id="savePresetBtn" class="live-header-btn save-btn" disabled title="Guardar cambios">
             💾 GUARDAR
           </button>
@@ -487,5 +496,42 @@
     <script src="descriptions.js"></script>
     <script src="app.js"></script>
     <script type="module" src="src/pocket/index.js"></script>
+    <script>
+      // Register Service Worker for PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch((err) => {
+            console.warn('SW registration failed:', err);
+          });
+        });
+      }
+
+      // Handle PWA installation prompt
+      let deferredInstallPrompt = null;
+      const installBtn = document.getElementById('pwaInstallBtn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        if (installBtn) {
+          installBtn.style.display = 'inline-flex';
+        }
+      });
+
+      installBtn?.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.style.display = 'none';
+        }
+        deferredInstallPrompt = null;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        if (installBtn) installBtn.style.display = 'none';
+        deferredInstallPrompt = null;
+      });
+    </script>
   </body>
 </html>

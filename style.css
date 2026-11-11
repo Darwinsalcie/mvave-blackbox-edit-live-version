@@ -1298,6 +1298,22 @@ body {
   box-shadow: 0 0 12px rgba(124, 77, 255, 0.4);
 }
 
+.install-btn {
+  background: linear-gradient(135deg, #00e5ff, #00b0ff);
+  color: #000;
+  border: 1px solid #80d8ff;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+.install-btn:hover {
+  filter: brightness(1.1);
+}
+
+.install-btn:active {
+  transform: scale(0.95);
+}
+
 .pocket-mode-btn:hover {
   filter: brightness(1.15);
 }

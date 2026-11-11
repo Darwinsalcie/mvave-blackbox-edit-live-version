@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Chassis Gradient -->
+    <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#23283c"/>
+      <stop offset="50%" stop-color="#141724"/>
+      <stop offset="100%" stop-color="#0a0c13"/>
+    </linearGradient>
+
+    <!-- Neon Rim Gradient -->
+    <linearGradient id="neonRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="50%" stop-color="#7c4dff"/>
+      <stop offset="100%" stop-color="#00e676"/>
+    </linearGradient>
+
+    <!-- Metallic Switch Gradient -->
+    <radialGradient id="metalSwitch" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="25%" stop-color="#b0b8cb"/>
+      <stop offset="60%" stop-color="#4e566d"/>
+      <stop offset="100%" stop-color="#1f2330"/>
+    </radialGradient>
+
+    <!-- LED Glow Gradient -->
+    <radialGradient id="ledGlow" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#00e5ff"/>
+      <stop offset="80%" stop-color="#0077ff"/>
+      <stop offset="100%" stop-color="#002266"/>
+    </radialGradient>
+
+    <!-- Outer Glow Filter -->
+    <filter id="cyanGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base Background (Dark Stage) -->
+  <rect width="512" height="512" rx="110" fill="#0c0d14"/>
+
+  <!-- Pedal Chassis -->
+  <rect x="32" y="32" width="448" height="448" rx="88" fill="url(#chassisGrad)" stroke="url(#neonRim)" stroke-width="8" filter="drop-shadow(0 20px 40px rgba(0,0,0,0.8))"/>
+
+  <!-- Inner Bevel -->
+  <rect x="48" y="48" width="416" height="416" rx="72" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="3"/>
+
+  <!-- Stomp Jewel LED (Top Center) -->
+  <circle cx="256" cy="115" r="38" fill="#00e5ff" opacity="0.3" filter="url(#cyanGlow)"/>
+  <circle cx="256" cy="115" r="26" fill="url(#ledGlow)" stroke="#ffffff" stroke-width="3"/>
+  <circle cx="256" cy="115" r="32" fill="none" stroke="#2a334d" stroke-width="4"/>
+
+  <!-- Central Logo: Stylized Lightning Bolt & Audio Waves -->
+  <g filter="url(#cyanGlow)">
+    <!-- Electric Bolt -->
+    <polygon points="266,160 216,245 254,245 240,310 296,220 258,220" fill="url(#neonRim)"/>
+  </g>
+
+  <!-- Futuristic Audio Waves flanking center -->
+  <line x1="140" y1="235" x2="185" y2="235" stroke="#00e5ff" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="155" y1="215" x2="185" y2="215" stroke="#00e5ff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+  <line x1="155" y1="255" x2="185" y2="255" stroke="#00e5ff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+
+  <line x1="327" y1="235" x2="372" y2="235" stroke="#7c4dff" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <line x1="327" y1="215" x2="357" y2="215" stroke="#7c4dff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+  <line x1="327" y1="255" x2="357" y2="255" stroke="#7c4dff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Footswitch Stomp Button (Lower Center) -->
+  <!-- Outer washer -->
+  <circle cx="256" cy="380" r="56" fill="#131622" stroke="#2c3349" stroke-width="5"/>
+  <!-- Hexagonal nut simulation -->
+  <circle cx="256" cy="380" r="44" fill="#252b3d" stroke="#3d4766" stroke-width="3"/>
+  <!-- Metallic switch plunger -->
+  <circle cx="256" cy="380" r="32" fill="url(#metalSwitch)" stroke="#ffffff" stroke-opacity="0.3" stroke-width="2"/>
+  <circle cx="256" cy="380" r="28" fill="none" stroke="#11131c" stroke-width="2" opacity="0.6"/>
+
+  <!-- Bottom Accent Text -->
+  <text x="256" y="460" font-family="-apple-system, sans-serif" font-size="20" font-weight="900" letter-spacing="4" fill="#8895b3" text-anchor="middle">LIVE MODE</text>
+</svg>
