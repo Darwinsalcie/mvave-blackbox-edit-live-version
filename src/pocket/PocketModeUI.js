@@ -207,7 +207,7 @@ export class PocketModeUI {
               <span>Sensibilidad de Pisada (Umbral de Impacto)</span>
               <span id="sensitivityValLabel" class="setting-val">16 m/s²</span>
             </label>
-            <input type="range" id="sensitivitySlider" min="8" max="30" step="0.5" value="16" class="pocket-slider" />
+            <input type="range" id="sensitivitySlider" min="1" max="30" step="0.5" value="16" class="pocket-slider" />
           </div>
 
           <!-- Stomp Window Slider -->
