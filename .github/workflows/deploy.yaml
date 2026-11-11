@@ -25,6 +25,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Inject Cache Buster & Versioning
+        run: |
+          BUILD_TIME=$(date +%s)
+          echo "Build timestamp: $BUILD_TIME"
+          # Replace cache name in sw.js so service worker activates fresh cache immediately
+          sed -i "s/const CACHE_NAME = 'blackbox-live-v[0-9]*';/const CACHE_NAME = 'blackbox-live-$BUILD_TIME';/" sw.js
+          # Append timestamp query string to imported scripts and css in index.html
+          sed -i "s/href=\"style.css\"/href=\"style.css?v=$BUILD_TIME\"/" index.html
+          sed -i "s/src=\"descriptions.js\"/src=\"descriptions.js?v=$BUILD_TIME\"/" index.html
+          sed -i "s/src=\"app.js\"/src=\"app.js?v=$BUILD_TIME\"/" index.html
+          sed -i "s/src=\"src\/pocket\/index.js\"/src=\"src\/pocket\/index.js?v=$BUILD_TIME\"/" index.html
+          sed -i "s/\.\/sw\.js/\.\/sw\.js?v=$BUILD_TIME/" index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

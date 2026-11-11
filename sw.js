@@ -35,7 +35,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate Event: cleanup old caches
+// Activate Event: cleanup old caches immediately and claim clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
@@ -44,23 +44,34 @@ self.addEventListener('activate', (event) => {
         Promise.all(
           keys.map((key) => {
             if (key !== CACHE_NAME) {
+              console.log('[SW] Deleting old cache:', key);
               return caches.delete(key);
             }
           })
         )
       )
       .then(() => self.clients.claim())
+      .then(() => {
+        // Force refresh all open windows/tabs to load new version
+        return self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'SW_UPDATED' });
+          });
+        });
+      })
   );
 });
 
-// Fetch Event: Network-first with cache fallback
+// Fetch Event: Network-first for HTML, JS and CSS to always get latest changes
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // Network-first for same-origin scripts, documents and stylesheets
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Update cache with fresh version
         if (
           networkResponse &&
           networkResponse.status === 200 &&
@@ -74,7 +85,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // Fallback to cache if offline
+        // Fallback to cache if network is unavailable (offline)
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
           if (event.request.mode === 'navigate') {

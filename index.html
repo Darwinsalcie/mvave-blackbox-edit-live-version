@@ -497,11 +497,24 @@
     <script src="app.js"></script>
     <script type="module" src="src/pocket/index.js"></script>
     <script>
-      // Register Service Worker for PWA
+      // Register Service Worker for PWA with automatic cache invalidation
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch((err) => {
-            console.warn('SW registration failed:', err);
+          navigator.serviceWorker
+            .register('./sw.js')
+            .then((reg) => {
+              // Check for updates on every page load
+              reg.update();
+            })
+            .catch((err) => {
+              console.warn('SW registration failed:', err);
+            });
+
+          // Listen for cache updates from service worker to reload page automatically
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'SW_UPDATED') {
+              window.location.reload();
+            }
           });
         });
       }
