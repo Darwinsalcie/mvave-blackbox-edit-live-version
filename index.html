@@ -1,13 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blackbox Edit</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0d0e14" />
+    <title>Blackbox Live Mode</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- SVG Icon Sprites -->
+    <!-- SVG Icon Sprites for Pedal Models -->
     <svg style="display: none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern
@@ -36,43 +42,13 @@
             stroke="currentColor"
             stroke-width="2"
           />
-          <circle
-            cx="14"
-            cy="24"
-            r="6"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="31"
-            cy="24"
-            r="6"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="49"
-            cy="24"
-            r="6"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="66"
-            cy="24"
-            r="6"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
+          <circle cx="14" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="31" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="49" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="66" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
           <circle cx="40" cy="100" r="8" fill="currentColor" stroke-width="2" />
           <circle cx="40" cy="100" r="9" stroke="currentColor" />
-          <circle
-            cx="40"
-            cy="100"
-            r="12"
-            stroke="currentColor"
-            stroke-width="2"
-          />
+          <circle cx="40" cy="100" r="12" stroke="currentColor" stroke-width="2" />
           <rect
             x="8"
             y="68"
@@ -103,34 +79,10 @@
             stroke="currentColor"
             stroke-width="3"
           />
-          <circle
-            cx="23"
-            cy="57"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="39"
-            cy="57"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="54"
-            cy="57"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
-          <circle
-            cx="69"
-            cy="57"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
+          <circle cx="23" cy="57" r="4" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="39" cy="57" r="4" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="54" cy="57" r="4" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="69" cy="57" r="4" stroke="currentColor" stroke-width="2.5" />
           <path
             d="M30 10 V4 H62 V10"
             stroke="currentColor"
@@ -138,443 +90,391 @@
             stroke-linecap="round"
           />
           <rect
-            x="13"
-            y="70"
-            width="10"
-            height="4"
+            x="8"
+            y="16"
+            width="76"
+            height="28"
             rx="2"
-            fill="currentColor"
-          />
-          <rect
-            x="69"
-            y="70"
-            width="10"
-            height="4"
-            rx="2"
-            fill="currentColor"
+            fill="url(#meshPattern)"
+            stroke="currentColor"
+            stroke-width="2"
           />
         </symbol>
         <symbol id="icon-mod" viewBox="0 0 80 130">
-          <rect
-            x="2"
-            y="2"
-            width="76"
-            height="126"
-            rx="10"
+          <path
+            d="M2 10C2 5.58172 5.58172 2 10 2H70C74.4183 2 78 5.58172 78 10V120C78 124.418 74.4183 128 70 128H10C5.58172 128 2 124.418 2 120V10Z"
             stroke="currentColor"
             stroke-width="3"
           />
+          <line
+            x1="2"
+            y1="48"
+            x2="78"
+            y2="48"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <circle cx="18" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="62" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="100" r="8" fill="currentColor" stroke-width="2" />
+          <circle cx="40" cy="100" r="9" stroke="currentColor" />
+          <circle cx="40" cy="100" r="12" stroke="currentColor" stroke-width="2" />
           <rect
             x="8"
-            y="8"
+            y="68"
             width="64"
-            height="40"
+            height="55"
             rx="4"
             stroke="currentColor"
             stroke-width="2"
           />
-          <circle
-            cx="22"
-            cy="28"
-            r="7"
+          <circle cx="40" cy="9" r="4" stroke="currentColor" stroke-width="2" />
+        </symbol>
+        <symbol id="icon-dly" viewBox="0 0 80 130">
+          <path
+            d="M2 10C2 5.58172 5.58172 2 10 2H70C74.4183 2 78 5.58172 78 10V120C78 124.418 74.4183 128 70 128H10C5.58172 128 2 124.418 2 120V10Z"
             stroke="currentColor"
-            stroke-width="2.5"
+            stroke-width="3"
           />
-          <circle
-            cx="40"
-            cy="28"
-            r="7"
+          <line
+            x1="2"
+            y1="48"
+            x2="78"
+            y2="48"
             stroke="currentColor"
-            stroke-width="2.5"
+            stroke-width="2"
           />
-          <circle
-            cx="58"
-            cy="28"
-            r="7"
-            stroke="currentColor"
-            stroke-width="2.5"
-          />
+          <circle cx="20" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="16" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="60" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="100" r="8" fill="currentColor" stroke-width="2" />
+          <circle cx="40" cy="100" r="9" stroke="currentColor" />
+          <circle cx="40" cy="100" r="12" stroke="currentColor" stroke-width="2" />
           <rect
-            x="20"
-            y="65"
-            width="40"
-            height="40"
+            x="8"
+            y="68"
+            width="64"
+            height="55"
+            rx="4"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <circle cx="40" cy="9" r="4" stroke="currentColor" stroke-width="2" />
+        </symbol>
+        <symbol id="icon-rev" viewBox="0 0 80 130">
+          <path
+            d="M2 10C2 5.58172 5.58172 2 10 2H70C74.4183 2 78 5.58172 78 10V120C78 124.418 74.4183 128 70 128H10C5.58172 128 2 124.418 2 120V10Z"
+            stroke="currentColor"
+            stroke-width="3"
+          />
+          <line
+            x1="2"
+            y1="48"
+            x2="78"
+            y2="48"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <circle cx="18" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="62" cy="24" r="6" stroke="currentColor" stroke-width="2.5" />
+          <circle cx="40" cy="100" r="8" fill="currentColor" stroke-width="2" />
+          <circle cx="40" cy="100" r="9" stroke="currentColor" />
+          <circle cx="40" cy="100" r="12" stroke="currentColor" stroke-width="2" />
+          <rect
+            x="8"
+            y="68"
+            width="64"
+            height="55"
+            rx="4"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <circle cx="40" cy="9" r="4" stroke="currentColor" stroke-width="2" />
+        </symbol>
+        <symbol id="icon-cab" viewBox="0 0 92 80">
+          <rect
+            x="2"
+            y="6"
+            width="88"
+            height="68"
             rx="6"
             stroke="currentColor"
             stroke-width="3"
           />
-          <circle cx="40" cy="54" r="3" fill="currentColor" />
-        </symbol>
-        <symbol id="icon-dly" viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r="15"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="25"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-opacity="0.7"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="35"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-opacity="0.4"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-opacity="0.2"
-          />
-        </symbol>
-        <symbol id="icon-rev" viewBox="0 0 100 100">
-          <rect
-            x="15"
-            y="35"
-            width="50"
-            height="50"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <rect
-            x="35"
-            y="15"
-            width="50"
-            height="50"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <line
-            x1="15"
-            y1="35"
-            x2="35"
-            y2="15"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <line
-            x1="65"
-            y1="35"
-            x2="85"
-            y2="15"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <line
-            x1="15"
-            y1="85"
-            x2="35"
-            y2="65"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <line
-            x1="65"
-            y1="85"
-            x2="85"
-            y2="65"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <path d="M43 51 L49 45 L49 56 Z" fill="currentColor" />
           <path
-            d="M54 43 C 56 45, 56 55, 54 57"
+            d="M30 6 V2 H62 V6"
             stroke="currentColor"
-            stroke-width="1.5"
+            stroke-width="3"
             stroke-linecap="round"
           />
-          <path
-            d="M56 41 C 59 45, 59 55, 56 59"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-          />
-        </symbol>
-        <symbol id="icon-cab" viewBox="0 0 120 130">
+          <circle cx="8" cy="12" r="2" fill="currentColor" />
+          <circle cx="84" cy="12" r="2" fill="currentColor" />
+          <circle cx="8" cy="68" r="2" fill="currentColor" />
+          <circle cx="84" cy="68" r="2" fill="currentColor" />
           <rect
-            x="2"
-            y="10"
-            width="116"
-            height="110"
-            rx="8"
-            stroke="currentColor"
-            stroke-width="3"
-          />
-          <rect
-            x="10"
-            y="18"
-            width="100"
-            height="94"
+            x="12"
+            y="12"
+            width="68"
+            height="56"
             rx="4"
             fill="url(#meshPattern)"
-          />
-          <rect
-            x="10"
-            y="18"
-            width="100"
-            height="94"
-            rx="4"
             stroke="currentColor"
-            stroke-width="3"
-          />
-          <path
-            d="M40 10 V4 H80 V10"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <rect
-            x="15"
-            y="120"
-            width="10"
-            height="4"
-            rx="2"
-            fill="currentColor"
-          />
-          <rect
-            x="95"
-            y="120"
-            width="10"
-            height="4"
-            rx="2"
-            fill="currentColor"
+            stroke-width="2"
           />
         </symbol>
       </defs>
     </svg>
 
-    <div id="loadingOverlay" class="overlay">
+    <!-- Global Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none">
       <div class="spinner"></div>
-      <h2 id="loadingText" style="margin: 0">Reading Amps...</h2>
-      <p style="color: #888; margin-top: 5px">Syncing with Blackbox</p>
+      <div id="loadingText" class="loading-text">Conectando...</div>
+      <p style="color: #888; font-size: 13px; margin-top: 5px">
+        Sincronizando con M-Vave Blackbox
+      </p>
     </div>
 
-    <div class="main-container">
-      <div class="sidebar">
-        <div class="sidebar-header">BLACKBOX EDIT</div>
-        <div class="connection-panel">
-          <div class="connection-status">
-            <div id="statusDot" class="status-dot"></div>
-            <span id="statusText" style="color: #888">Disconnected</span>
-          </div>
-          <button
-            id="connectBtn"
-            class="btn btn-primary"
-            onclick="editor.connect()"
-          >
-            Connect
+    <!-- Main Live App Shell -->
+    <div class="live-app-container">
+      <!-- Live Header -->
+      <header class="live-header">
+        <!-- Connection Status & Button -->
+        <div class="header-section header-connect">
+          <button id="connectBtn" class="live-header-btn connect-btn" onclick="editor.connect()">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">CONECTAR</span>
           </button>
           <button
             id="disconnectBtn"
-            class="btn"
-            disabled
+            class="live-header-btn disconnect-btn"
             onclick="editor.disconnect()"
             style="display: none"
           >
-            Disconnect
+            DESCONECTAR
+          </button>
+          <div class="status-indicator">
+            <span id="statusDot" class="status-dot"></span>
+            <span id="statusText" class="status-text">Desconectado</span>
+          </div>
+        </div>
+
+        <!-- Preset Display & Navigation -->
+        <div class="header-section header-preset">
+          <button id="prevPresetBtn" class="preset-arrow-btn" title="Preset anterior">◀</button>
+          <div id="presetDisplayBtn" class="preset-pill" title="Toca para ver todos los presets">
+            <span id="patchNumber" class="patch-number">P01</span>
+            <span id="patchName" class="patch-name">Preset 1</span>
+          </div>
+          <button id="nextPresetBtn" class="preset-arrow-btn" title="Preset siguiente">▶</button>
+        </div>
+
+        <!-- View Switcher Tabs & Tools -->
+        <div class="header-section header-tools">
+          <div class="view-tabs">
+            <button id="tabEffects" class="tab-btn active" data-view="effects">
+              🎛️ EFECTOS
+            </button>
+            <button id="tabControls" class="tab-btn" data-view="controls">
+              ⚡ VOL & DELAY
+            </button>
+          </div>
+          <button id="savePresetBtn" class="live-header-btn save-btn" disabled title="Guardar cambios">
+            💾 GUARDAR
+          </button>
+          <button id="settingsBtn" class="icon-tool-btn" title="Configurar efectos">
+            ⚙️
+          </button>
+          <button id="logToggle" class="icon-tool-btn" title="Registro de comunicación">
+            📋
           </button>
         </div>
+      </header>
 
-        <div class="patch-list">
-          <div class="patch-search-container">
-            <input
-              type="text"
-              id="patchSearchInput"
-              placeholder="Search 80 presets..."
-            />
+      <!-- Live Stage Area -->
+      <main class="live-stage">
+        <!-- VISTA 1: EFECTOS (STOMPBOXES) -->
+        <section id="viewEffects" class="live-view active">
+          <div id="stompboxesContainer" class="stompboxes-container">
+            <!-- Dynamic stompboxes injected by app.js -->
           </div>
-          <div id="patchListContainer" class="patch-items-container">
-            <!-- Items injected automatically by app.js -->
+        </section>
+
+        <!-- VISTA 2: VOLUMEN & DOTTED DELAY -->
+        <section id="viewControls" class="live-view">
+          <div class="live-controls-grid">
+            <!-- CONTROL 1: PRESET VOLUME (Botón Dos En Uno) -->
+            <div class="live-card volume-card" id="liveVolumeModule">
+              <!-- Indicador de volumen arriba con barra -->
+              <div class="volume-header-deck">
+                <div class="volume-readout-row">
+                  <span class="card-title">🔊 VOLUMEN DEL PRESET</span>
+                  <div class="vol-num-wrap">
+                    <span id="volumeValueDisplay" class="volume-number">50</span>
+                    <span class="vol-pct">%</span>
+                  </div>
+                </div>
+                <div class="volume-progress-bar">
+                  <div id="volumeBarFill" class="volume-progress-fill" style="width: 50%"></div>
+                </div>
+              </div>
+
+              <!-- Dos botones grandes sin nada en el medio -->
+              <div class="volume-control-box">
+                <!-- Minus button (Left in landscape, Bottom in portrait) -->
+                <button
+                  id="volMinusBtn"
+                  class="vol-step-btn volume-btn-minus"
+                  aria-label="Bajar volumen"
+                >
+                  <span class="vol-symbol">−</span>
+                  <span class="vol-tag">VOL −</span>
+                </button>
+
+                <!-- Plus button (Right in landscape, Top in portrait) -->
+                <button
+                  id="volPlusBtn"
+                  class="vol-step-btn volume-btn-plus"
+                  aria-label="Subir volumen"
+                >
+                  <span class="vol-symbol">+</span>
+                  <span class="vol-tag">VOL +</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- CONTROL 2: DOTTED DELAY & TAP TEMPO -->
+            <div class="live-card delay-card" id="liveDelayModule">
+              <div class="card-title-bar">
+                <span class="card-title">⏱️ DELAY & RITMO</span>
+                <span id="delayModelBadge" class="model-badge">ANALOG</span>
+              </div>
+              <div class="delay-control-box">
+                <!-- Giant Dotted 1/8 Stomp Button -->
+                <button id="dottedDelayBtn" class="dotted-stomp-btn">
+                  <div class="stomp-led" id="dottedLed"></div>
+                  <div class="dotted-musical-icon">♪.</div>
+                  <div class="dotted-title">DOTTED 1/8</div>
+                  <div id="dottedStatusLabel" class="dotted-status">DESACTIVADO (1/4)</div>
+                </button>
+
+                <!-- Delay Time & Tap Tempo Side Deck -->
+                <div class="delay-side-deck">
+                  <div class="delay-readout-panel">
+                    <div class="readout-label">TIEMPO DELAY</div>
+                    <div id="delayTimeMsDisplay" class="readout-value-ms">500ms</div>
+                    <div id="delayBpmDisplay" class="readout-value-bpm">120.0 BPM</div>
+                  </div>
+
+                  <button id="liveTapTempoBtn" class="live-tap-btn">
+                    <div id="tapIndicatorDot" class="tap-flash-dot"></div>
+                    <span class="tap-main-text">TAP TEMPO</span>
+                    <span class="tap-sub-text">Marca el pulso</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODAL: Configurar Efectos para Vista 1 -->
+    <div id="effectsConfigModal" class="live-modal-backdrop" style="display: none">
+      <div class="live-modal-card">
+        <div class="modal-header">
+          <h3>Efectos en Vivo</h3>
+          <p class="modal-subtitle">Selecciona hasta 3 efectos para la Vista 1</p>
         </div>
-      </div>
-
-      <div class="main-content">
-        <div
-          id="editor-container"
-          style="display: flex; height: 100%; flex-direction: column; flex: 1"
-        >
-          <div class="top-bar">
-            <div class="patch-info">
-              <div class="patch-number" id="patchNumber">M-VAVE</div>
-              <div class="patch-name" id="patchName">Live Editor</div>
-            </div>
-
-            <div class="preset-controls">
-              <button id="savePresetBtn" class="btn btn-save" disabled>
-                SAVE
-              </button>
-              <button
-                id="advancedSettingsBtn"
-                class="settings-btn"
-                title="Advanced Options"
-              >
-                ⚙️
-              </button>
-            </div>
-          </div>
-
-          <div class="patch-volume-container">
-            <div class="patch-volume-module">
-              <div class="module-name">🔊 Patch Vol</div>
-              <div class="slider-container">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value="50"
-                  class="slider"
-                  id="patchVolSlider"
-                  oninput="
-                    editor.registerEdit();
-                    this.nextElementSibling.innerText = this.value;
-                    this.style.setProperty('--progress', this.value + '%');
-                  "
-                  onchange="
-                    this.blur();
-                    editor.changeKnob(0, parseInt(this.value));
-                  "
-                  style="--progress: 50%"
-                />
-                <span class="slider-value">50</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="signal-chain">
-            <div class="chain-flow" id="signalChain"></div>
-          </div>
-
-          <div class="effects-panel">
-            <div class="effect-controls active" id="workspacePanel">
-              <div
-                class="effect-description"
-                style="color: #555; margin-top: 50px; text-align: center"
-              >
-                Connect the device and click on a pedal block to edit its
-                parameters.
-              </div>
-            </div>
-          </div>
+        <div id="effectsSelectionList" class="effects-selector-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+        <div class="modal-footer">
+          <button id="closeEffectsConfigBtn" class="live-modal-btn">LISTO</button>
         </div>
       </div>
     </div>
 
-    <div id="advancedSettingsPanel" class="advanced-settings-panel">
-      <h4>Advanced Options</h4>
-      <p style="font-size: 11px; color: #888; margin-bottom: 15px">
-        Preset sharing and backup tools are currently under development.
-      </p>
-
-      <div class="control-row" style="margin-bottom: 15px">
-        <div class="control-label" style="min-width: 100px">Verbose Log</div>
-        <div class="toggle-switch" id="verboseLogToggle"></div>
+    <!-- MODAL: Selector Rápido de Presets (80 Presets) -->
+    <div id="presetPickerModal" class="live-modal-backdrop" style="display: none">
+      <div class="live-modal-card preset-picker-card">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <h3>Seleccionar Preset</h3>
+            <button id="closePresetPickerBtn" class="close-x-btn">✕</button>
+          </div>
+          <input
+            type="text"
+            id="presetSearchInput"
+            class="preset-search-input"
+            placeholder="Buscar preset por nombre o número..."
+          />
+        </div>
+        <div id="presetGridContainer" class="preset-grid">
+          <!-- 80 Presets injected by JavaScript -->
+        </div>
       </div>
-
-      <div class="control-row" style="margin-bottom: 15px">
-        <div class="control-label" style="min-width: 100px">Pause Polling</div>
-        <div
-          class="toggle-switch"
-          id="pausePollingToggle"
-          title="Stops automatic syncing to observe raw pedal behavior"
-        ></div>
-      </div>
-
-      <button id="exportPresetBtn" class="btn" disabled title="Coming soon">
-        Export Preset
-      </button>
-      <button
-        id="importPresetBtn"
-        class="btn"
-        style="margin-top: 10px"
-        disabled
-        title="Coming soon"
-      >
-        Import Preset
-      </button>
-      <button
-        id="backupAllBtn"
-        class="btn"
-        style="margin-top: 10px"
-        disabled
-        title="Coming soon"
-      >
-        Backup All (Dump)
-      </button>
     </div>
 
-    <div class="log-toggle" id="logToggle">Show Log</div>
-    <div class="log-panel" id="logPanel">
-      <div class="log-header">
-        <h4>Communication Log</h4>
-        <button class="btn clear-btn" id="clearLogBtn">Clear</button>
+    <!-- MODAL: USB MIDI (Compatible con app original) -->
+    <div id="usbMidiModal" class="live-modal-backdrop" style="display: none">
+      <div class="live-modal-card">
+        <div class="modal-header">
+          <h3>Dispositivo USB MIDI</h3>
+          <p class="modal-subtitle">Selecciona los puertos de entrada y salida:</p>
+        </div>
+        <div id="usbDeviceList" class="usb-device-list"></div>
+        <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end">
+          <button id="cancelUsbBtn" class="live-modal-btn btn-secondary" onclick="editor.cancelUsbConnection()">
+            Cancelar (Usar BLE)
+          </button>
+          <button id="confirmUsbBtn" class="live-modal-btn btn-primary" disabled>
+            Conectar vía USB
+          </button>
+        </div>
       </div>
-      <div class="manual-command-panel">
+    </div>
+
+    <!-- Drawer: Panel de Registro / Log de Comunicación -->
+    <div id="logPanel" class="live-log-drawer" style="display: none">
+      <div class="log-drawer-header">
+        <span class="log-title">Registro de Comunicación BLE / MIDI</span>
+        <div class="log-actions">
+          <label class="log-check-label">
+            <input type="checkbox" id="verboseLogToggle" /> Verbose
+          </label>
+          <label class="log-check-label">
+            <input type="checkbox" id="pausePollingToggle" /> Pausar Polling
+          </label>
+          <button id="clearLogBtn" class="log-btn">Limpiar</button>
+          <button id="closeLogDrawerBtn" class="log-btn">Cerrar</button>
+        </div>
+      </div>
+      <div class="manual-command-bar">
         <input
           type="text"
           id="manualCommandInput"
-          placeholder="Enter hex command..."
+          placeholder="Comando hexadecimal manual..."
         />
-        <button id="sendManualCommandBtn" class="btn send-btn">Send</button>
+        <button id="sendManualCommandBtn" class="log-btn btn-send">Enviar</button>
       </div>
-      <div class="log-content" id="logContent"></div>
+      <div id="logContent" class="log-messages-area"></div>
     </div>
 
-    <!-- USB MIDI Device Selection Modal -->
-    <div
-      id="usbMidiModal"
-      class="advanced-settings-panel"
-      style="
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 450px;
-        display: none;
-        z-index: 3000;
-      "
-    >
-      <h4>Select USB MIDI Device</h4>
-      <div style="margin: 20px 0">
-        <p style="color: #ccc; font-size: 12px; margin-bottom: 15px">
-          Found USB MIDI devices. Please select one pair (input and output):
-        </p>
-        <div
-          id="usbDeviceList"
-          style="
-            background: #1e1e1e;
-            border: 1px solid #444;
-            border-radius: 4px;
-            max-height: 250px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-          "
-        >
-          <!-- Device pairs will be populated here -->
-        </div>
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 15px">
-        <button
-          id="cancelUsbBtn"
-          class="btn"
-          onclick="editor.cancelUsbConnection()"
-        >
-          Cancel (Use BLE)
-        </button>
-        <button id="confirmUsbBtn" class="btn btn-primary" disabled>
-          Connect via USB
-        </button>
-      </div>
+    <!-- Hidden elements kept for protocol compatibility if referenced -->
+    <div style="display: none">
+      <div id="patchListContainer"></div>
+      <input type="text" id="patchSearchInput" />
+      <div id="advancedSettingsBtn"></div>
+      <div id="advancedSettingsPanel"></div>
+      <div id="workspacePanel"></div>
+      <div id="signalChain"></div>
+      <input type="range" id="patchVolSlider" min="0" max="100" value="50" />
+      <button id="tap-button"></button>
+      <input type="number" id="tap-bpm-input" value="120" />
+      <div id="note-divisions"></div>
+      <span id="delay-time-ms"></span>
     </div>
 
     <script src="descriptions.js"></script>
