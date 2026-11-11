@@ -706,19 +706,24 @@ class MvaveBLEEditor {
     this.logContent.scrollTop = this.logContent.scrollHeight;
   }
 
+  // =========================================================
+  // Checksum algorithm & Helpers
+  // =========================================================
+
   calculateChecksum(payload) {
     let sum = 0;
-    for (let i = 0; i < payload.length; i++) sum += payload[i];
-    return (~sum + 1) & 0xff;
+    for (let i = 4; i < payload.length - 1; i++) sum += payload[i];
+    return 0xff - (sum % 256);
   }
 
   buildPacket(hexString) {
-    const rawBytes = hexString
-      .trim()
-      .split(/\s+/)
-      .map((b) => parseInt(b, 16));
-    const checksum = this.calculateChecksum(rawBytes);
-    return new Uint8Array([...rawBytes, checksum]);
+    let bytes = hexString
+      .replace(/\s/g, "")
+      .match(/.{1,2}/g)
+      .map((byte) => parseInt(byte, 16));
+    let payload = new Uint8Array(bytes);
+    payload[payload.length - 1] = this.calculateChecksum(payload);
+    return payload;
   }
 
   bufToHex(buffer) {
@@ -728,38 +733,36 @@ class MvaveBLEEditor {
   }
 
   encodeSysEx(data) {
-    const encoded = [0xf0, 0x00, 0x59];
-    let hi = 0;
+    let encoded = [];
+    let accum = 0;
+    let bitNum = 0;
     for (let i = 0; i < data.length; i++) {
-      const idx = i % 7;
-      if (idx === 0) {
-        hi = 0;
-        let count = Math.min(7, data.length - i);
-        for (let j = 0; j < count; j++) {
-          if (data[i + j] & 0x80) hi |= 1 << (6 - j);
-        }
-        encoded.push(hi);
+      accum |= data[i] << bitNum;
+      bitNum += 8;
+      while (bitNum >= 7) {
+        encoded.push(accum & 0x7f);
+        accum >>= 7;
+        bitNum -= 7;
       }
-      encoded.push(data[i] & 0x7f);
     }
-    encoded.push(0xf7);
-    return new Uint8Array(encoded);
+    encoded.push(accum & 0x7f);
+    return encoded;
   }
 
   decodeSysEx(encoded) {
-    const inner = encoded.slice(3, -1);
-    const decoded = [];
-    let i = 0;
-    while (i < inner.length) {
-      const hi = inner[i++];
-      let count = Math.min(7, inner.length - i);
-      for (let j = 0; j < count; j++) {
-        let b = inner[i++];
-        if (hi & (1 << (6 - j))) b |= 0x80;
-        decoded.push(b);
+    let decoded = [];
+    let accum = 0;
+    let bitNum = 0;
+    for (let i = 0; i < encoded.length; i++) {
+      accum |= encoded[i] << bitNum;
+      bitNum += 7;
+      if (bitNum >= 8) {
+        decoded.push(accum & 0xff);
+        accum >>= 8;
+        bitNum -= 8;
       }
     }
-    return new Uint8Array(decoded);
+    return decoded;
   }
 
   async sendManualCommand() {
@@ -779,13 +782,13 @@ class MvaveBLEEditor {
   async sendCommand(payload) {
     if (!this.isConnected) return;
     try {
-      if (this.connectionType === "usb") {
-        if (!this.midiOutput) throw new Error("USB MIDI Output unavailable");
-        const sysex = this.encodeSysEx(payload);
+      this.log(`[OUT | RAW] ${this.bufToHex(payload)}`, "sent", true);
+      if (this.connectionType === "usb" && this.midiOutput) {
+        const encoded = this.encodeSysEx(payload);
+        const sysex = new Uint8Array([0xf0, ...encoded, 0xf7]);
+        this.log(`[OUT | SYSEX] ${this.bufToHex(sysex)}`, "sent", true);
         this.midiOutput.send(sysex);
-      } else {
-        if (!this.writeCharacteristic)
-          throw new Error("BLE Write Characteristic unavailable");
+      } else if (this.connectionType === "ble" && this.writeCharacteristic) {
         await this.writeCharacteristic.writeValueWithoutResponse(payload);
       }
     } catch (err) {
@@ -862,28 +865,62 @@ class MvaveBLEEditor {
         return this.connectBLE();
       }
 
-      const pairs = [];
+      const deviceMap = new Map();
       inputs.forEach((input) => {
-        const matchingOutput = outputs.find((out) => out.name === input.name);
-        if (matchingOutput) pairs.push({ input, output: matchingOutput });
+        const name = input.name || "Unknown Input";
+        if (!deviceMap.has(name))
+          deviceMap.set(name, {
+            input: null,
+            output: null,
+            inputName: name,
+            outputName: "",
+          });
+        deviceMap.get(name).input = input;
       });
+
+      outputs.forEach((output) => {
+        const name = output.name || "Unknown Output";
+        let foundMatch = false;
+        for (const [key, device] of deviceMap.entries()) {
+          if (key === name || name.startsWith(key.split(" ")[0])) {
+            device.output = output;
+            device.outputName = name;
+            foundMatch = true;
+            break;
+          }
+        }
+        if (!foundMatch)
+          deviceMap.set(name, {
+            input: null,
+            output: output,
+            inputName: "",
+            outputName: name,
+          });
+      });
+
+      const pairs = Array.from(deviceMap.values())
+        .filter((pair) => pair.input && pair.output)
+        .map((pair) => ({
+          input: pair.input,
+          output: pair.output,
+          inputName: pair.inputName,
+          outputName: pair.outputName,
+          name: pair.inputName || pair.outputName,
+        }));
 
       if (pairs.length === 0) {
         this.log("No paired USB MIDI found. Falling back to BLE.", "info");
         return this.connectBLE();
       }
 
-      if (pairs.length === 1) {
-        return this.finalizeUsbConnection(pairs[0]);
-      }
-
-      // If multiple, show USB modal
+      // Show USB modal so user can choose USB device or Cancel (Use BLE)
       const modal = document.getElementById("usbMidiModal");
       const list = document.getElementById("usbDeviceList");
       const confirmBtn = document.getElementById("confirmUsbBtn");
       if (!modal || !list || !confirmBtn) return this.finalizeUsbConnection(pairs[0]);
 
       list.innerHTML = "";
+      confirmBtn.disabled = true;
       pairs.forEach((pair, index) => {
         const row = document.createElement("div");
         row.style.padding = "10px";
@@ -902,6 +939,8 @@ class MvaveBLEEditor {
           };
         };
         list.appendChild(row);
+        // Auto-select first option for convenience
+        if (index === 0) row.click();
       });
 
       modal.style.display = "flex";
@@ -953,6 +992,7 @@ class MvaveBLEEditor {
   handleDisconnect() {
     this.isConnected = false;
     this.syncState = "IDLE";
+    if (this.handshakeRetryTimer) clearTimeout(this.handshakeRetryTimer);
     this.setModified(false);
     this.updateUI();
     if (this.pollingInterval) clearInterval(this.pollingInterval);
@@ -962,8 +1002,10 @@ class MvaveBLEEditor {
   }
 
   async startHandshake() {
+    if (this.handshakeRetryTimer) clearTimeout(this.handshakeRetryTimer);
     this.syncState = "READING_AMPS";
     this.rxBuffer = [];
+    this.handshakeRetries = 0;
 
     const overlay = document.getElementById("loadingOverlay");
     const text = document.getElementById("loadingText");
@@ -974,6 +1016,76 @@ class MvaveBLEEditor {
     await this.sendCommand(
       this.buildPacket("00 59 23 08 00 00 05 00 00 00 90 18 01 00 00"),
     );
+
+    this.scheduleHandshakeRetry();
+  }
+
+  scheduleHandshakeRetry() {
+    if (this.handshakeRetryTimer) clearTimeout(this.handshakeRetryTimer);
+    this.handshakeRetryTimer = setTimeout(async () => {
+      if (!this.isConnected || this.syncState === "READY") return;
+      this.handshakeRetries = (this.handshakeRetries || 0) + 1;
+
+      if (this.handshakeRetries <= 3) {
+        this.log(
+          `Sin respuesta en ${this.syncState}, reintentando (${this.handshakeRetries}/3)...`,
+          "info",
+        );
+        this.rxBuffer = [];
+        if (this.syncState === "READING_AMPS") {
+          await this.sendCommand(
+            this.buildPacket("00 59 23 08 00 00 05 00 00 00 90 18 01 00 00"),
+          );
+        } else if (this.syncState === "READING_CABS") {
+          await this.sendCommand(
+            this.buildPacket("00 59 23 08 00 00 05 00 00 00 80 18 01 00 00"),
+          );
+        }
+        this.scheduleHandshakeRetry();
+      } else {
+        this.log(
+          "El dispositivo tardó demasiado en enviar los nombres. Puedes omitir o verificar que no esté conectado a otra app.",
+          "error",
+        );
+        const subText = document.getElementById("loadingSubText");
+        if (subText) {
+          subText.innerText =
+            "El pedal no responde al handshake. Si estás por USB y otra app (o pestaña) usa el puerto MIDI, ciérrala o pulsa Omitir.";
+          subText.style.color = "#ff9800";
+        }
+      }
+    }, 2200);
+  }
+
+  async skipHandshake() {
+    if (this.handshakeRetryTimer) clearTimeout(this.handshakeRetryTimer);
+    this.log("Handshake omitido manualmente. Iniciando sincronización...", "info");
+    await this.finishHandshake();
+  }
+
+  async finishHandshake() {
+    if (this.handshakeRetryTimer) clearTimeout(this.handshakeRetryTimer);
+    this.syncState = "READY";
+    this.rxBuffer = [];
+    const overlay = document.getElementById("loadingOverlay");
+    if (overlay) overlay.style.display = "none";
+
+    if (this.pollingInterval) clearInterval(this.pollingInterval);
+    this.pollingInterval = setInterval(() => {
+      if (this.isConnected && !this.isPollingPaused) {
+        this.requestCurrentPresetId();
+        setTimeout(() => {
+          if (this.isConnected && !this.isPollingPaused) {
+            this.requestRamDump();
+          }
+        }, 250);
+      }
+    }, 2500);
+
+    await this.requestCurrentPresetId();
+    await this.requestRamDump();
+    this.renderLiveEffects();
+    this.log("Sincronización con Blackbox lista!", "success");
   }
 
   async processHandshakeBlock() {
@@ -984,77 +1096,82 @@ class MvaveBLEEditor {
         this.BLOCKS[1].modelNames = extractedNames.slice(0, 20);
         this.syncState = "READING_CABS";
         this.rxBuffer = [];
+        this.handshakeRetries = 0;
         const text = document.getElementById("loadingText");
         if (text) text.innerText = "Cargando cabinas...";
 
         await this.sendCommand(
           this.buildPacket("00 59 23 08 00 00 05 00 00 00 80 18 01 00 00"),
         );
+        this.scheduleHandshakeRetry();
       } else if (this.syncState === "READING_CABS") {
         this.BLOCKS[5].modelNames = extractedNames.slice(0, 20);
-        this.syncState = "READY";
-        this.rxBuffer = [];
-        const overlay = document.getElementById("loadingOverlay");
-        if (overlay) overlay.style.display = "none";
-
-        this.pollingInterval = setInterval(() => {
-          if (this.isConnected && !this.isPollingPaused) {
-            this.requestCurrentPresetId();
-            setTimeout(() => {
-              if (this.isConnected && !this.isPollingPaused) {
-                this.requestRamDump();
-              }
-            }, 60);
-          }
-        }, 300);
-
-        this.renderLiveEffects();
-        this.log("Sincronización con Blackbox lista!", "success");
+        await this.finishHandshake();
       }
     }
   }
 
   decodeNamesBlock(byteArray) {
-    const rawNames = [];
-    const nameLength = 14;
-    const totalEntries = 20;
-
-    for (let i = 0; i < totalEntries; i++) {
-      const start = i * nameLength;
-      const slice = byteArray.slice(start, start + nameLength);
-      let name = "";
-      for (let j = 0; j < slice.length; j++) {
-        const charCode = slice[j];
-        if (charCode === 0x00) break;
-        if (charCode >= 32 && charCode <= 126) {
-          name += String.fromCharCode(charCode);
+    let names = [],
+      currentName = "";
+    for (let b of byteArray) {
+      if (b === 0x00) {
+        if (currentName.trim().length > 0) {
+          names.push(currentName.replace(/^\d+/, ""));
+          currentName = "";
         }
+      } else if (b >= 32 && b <= 126) {
+        currentName += String.fromCharCode(b);
       }
-      if (name.trim()) rawNames.push(name.trim());
-      else rawNames.push(`Model ${i + 1}`);
     }
-    return rawNames;
+    return names;
   }
 
   handleMidiMessage(event) {
     const data = event.data;
-    if (data[0] === 0xf0) {
-      this.usbMidiBuffer = Array.from(data);
-      if (data[data.length - 1] === 0xf7) {
-        this.processCompleteSysEx(this.usbMidiBuffer);
-        this.usbMidiBuffer = null;
-      }
+    if (data[0] === 0xf0 && data[data.length - 1] === 0xf7) {
+      this.log(`[IN | USB SYSEX] ${this.bufToHex(data)}`, "received", true);
+      this.processCompleteSysEx(data);
+    } else if (data[0] === 0xf0) {
+      this.log(
+        `[IN | USB SYSEX FRAGMENT START] ${this.bufToHex(data)}`,
+        "info",
+        true,
+      );
+      this.usbMidiBuffer = new Uint8Array(data);
     } else if (this.usbMidiBuffer) {
-      this.usbMidiBuffer.push(...data);
+      const combined = new Uint8Array(this.usbMidiBuffer.length + data.length);
+      combined.set(this.usbMidiBuffer);
+      combined.set(data, this.usbMidiBuffer.length);
+      this.usbMidiBuffer = combined;
       if (data[data.length - 1] === 0xf7) {
-        this.processCompleteSysEx(this.usbMidiBuffer);
+        this.log(
+          `[IN | USB SYSEX FRAGMENT END] ${this.bufToHex(data)}`,
+          "info",
+          true,
+        );
+        const completeData = this.usbMidiBuffer;
         this.usbMidiBuffer = null;
+        this.log(
+          `[IN | USB SYSEX REASSEMBLED] ${this.bufToHex(completeData)}`,
+          "received",
+          true,
+        );
+        this.processCompleteSysEx(completeData);
+      } else {
+        this.log(
+          `[IN | USB SYSEX FRAGMENT MIDDLE] ${this.bufToHex(data)}`,
+          "info",
+          true,
+        );
       }
     }
   }
 
   processCompleteSysEx(data) {
-    const decoded = this.decodeSysEx(data);
+    const encoded = data.slice(1, -1);
+    const decodedArray = this.decodeSysEx(encoded);
+    const decoded = new Uint8Array(decodedArray);
     this.handleIncomingData({ target: { value: { buffer: decoded.buffer } } });
   }
 
@@ -1066,23 +1183,33 @@ class MvaveBLEEditor {
       this.log(`RX: ${this.bufToHex(bytes)}`, "info", true);
     }
 
-    if (bytes[2] === 0x24 && bytes.length === 16 && bytes[10] === 0xe0) {
+    // --- DEVICE ACKNOWLEDGMENT (ACK) ---
+    if (
+      (bytes.length === 8 && bytes[3] === 0x01 && bytes[7] === 0xff) ||
+      (bytes[2] === 0x24 && bytes.length === 16 && bytes[10] === 0xe0)
+    ) {
       if (this.pendingSaveResolve) {
         clearTimeout(this.saveTimeoutId);
-        this.pendingSaveResolve();
+        this.pendingSaveResolve(true);
         this.pendingSaveResolve = null;
         this.pendingSaveReject = null;
+        this.saveTimeoutId = null;
+        this.log("Save Acknowledged by Device", "success");
       }
+      return;
     }
 
+    // --- HANDSHAKE STREAM ---
     if (
       this.syncState === "READING_AMPS" ||
       this.syncState === "READING_CABS"
     ) {
-      this.rxBuffer.push(...bytes.slice(14, -1));
-      if (this.rxBuffer.length >= 280) {
-        this.processHandshakeBlock();
-      }
+      let payload =
+        bytes.length >= 14 && bytes[0] === 0x00 && bytes[1] === 0x59
+          ? bytes.slice(14)
+          : bytes;
+      this.rxBuffer.push(...payload);
+      this.processHandshakeBlock();
       return;
     }
 
@@ -1095,26 +1222,36 @@ class MvaveBLEEditor {
       const patchNameEl = document.getElementById("patchName");
       const expectedP = `P${(activePresetId + 1).toString().padStart(2, "0")}`;
 
-      if (patchNumEl) patchNumEl.textContent = expectedP;
-      if (patchNameEl) {
-        patchNameEl.textContent =
-          this.presetNames[activePresetId] || `Preset ${activePresetId + 1}`;
+      if (patchNumEl && patchNumEl.textContent !== expectedP) {
+        patchNumEl.textContent = expectedP;
+        if (patchNameEl) {
+          patchNameEl.textContent =
+            this.presetNames[activePresetId] || `Preset ${activePresetId + 1}`;
+        }
+        this.setModified(false);
       }
-
-      this.setModified(false);
       return;
     }
 
     // RAM Dump Packet (107 bytes)
-    if (bytes.length === 107) {
+    if (
+      this.syncState === "READY" &&
+      bytes.length === 107 &&
+      bytes[1] === 89 &&
+      bytes[2] === 35
+    ) {
+      if (this.lastUiEditTime && Date.now() - this.lastUiEditTime < 1200) {
+        return;
+      }
       this.parseRamDump(bytes);
     }
   }
 
   async requestRamDump() {
     if (!this.isConnected) return;
-    const cmdHex = "00 59 23 08 00 00 04 00 00 00 E0 02 00 00 00";
-    await this.sendCommand(this.buildPacket(cmdHex));
+    await this.sendCommand(
+      this.buildPacket("00 59 23 08 00 00 04 00 00 00 10 5C 00 00 00"),
+    );
   }
 
   parseRamDump(dump) {
@@ -1193,6 +1330,9 @@ class MvaveBLEEditor {
       if (patchNameEl)
         patchNameEl.textContent =
           this.presetNames[presetId] || `Preset ${presetId + 1}`;
+      setTimeout(async () => {
+        await this.requestRamDump();
+      }, 350);
     } catch (err) {
       this.log(`Error al cambiar preset: ${err.message}`, "error");
     }
@@ -1209,7 +1349,7 @@ class MvaveBLEEditor {
       0x00,
       0x59,
       0x22,
-      0x68,
+      0x64,
       0x00,
       0x00,
       0x04,
@@ -1217,19 +1357,15 @@ class MvaveBLEEditor {
       addrH,
       0x00,
       0x00,
-      0x04,
+      0x5c,
       0x00,
       0x00,
     ]);
 
-    const payload = new Uint8Array(header.length + presetData.length);
+    const payload = new Uint8Array(107);
     payload.set(header, 0);
-    payload.set(presetData, header.length);
-
-    const checksum = this.calculateChecksum(payload);
-    const fullPacket = new Uint8Array(payload.length + 1);
-    fullPacket.set(payload, 0);
-    fullPacket[payload.length] = checksum;
+    payload.set(presetData, 14);
+    payload[106] = this.calculateChecksum(payload);
 
     return new Promise(async (resolve, reject) => {
       this.pendingSaveResolve = resolve;
@@ -1244,16 +1380,13 @@ class MvaveBLEEditor {
         }
       }, 3000);
 
-      if (this.connectionType === "usb") {
-        const sysex = this.encodeSysEx(fullPacket);
-        this.midiOutput.send(sysex);
-      } else {
-        const chunkSize = 20;
-        for (let i = 0; i < fullPacket.length; i += chunkSize) {
-          const chunk = fullPacket.slice(i, i + chunkSize);
-          await this.writeCharacteristic.writeValueWithoutResponse(chunk);
-          await new Promise((r) => setTimeout(r, 10));
-        }
+      try {
+        await this.sendCommand(payload);
+      } catch (error) {
+        clearTimeout(this.saveTimeoutId);
+        this.pendingSaveResolve = null;
+        this.pendingSaveReject = null;
+        reject(error);
       }
     });
   }
@@ -1328,9 +1461,10 @@ class MvaveBLEEditor {
   async changeKnob(addressDecimal, value) {
     if (!this.isConnected) return;
     this.registerEdit();
-    if (this.currentRawData) this.currentRawData[addressDecimal] = value;
-
-    const cmdHex = `00 59 22 09 00 00 04 ${addressDecimal.toString(16).padStart(2, "0")} 00 00 10 01 00 00 ${value.toString(16).padStart(2, "0")} 00`;
+    let val = Math.max(0, Math.min(100, value));
+    if (this.currentRawData) this.currentRawData[addressDecimal] = val;
+    let v = val.toString(16).padStart(2, "0");
+    const cmdHex = `00 59 22 0A 00 00 04 ${addressDecimal.toString(16).padStart(2, "0")} 00 00 10 02 00 00 ${v} 00 00`;
     await this.sendCommand(this.buildPacket(cmdHex));
   }
 
