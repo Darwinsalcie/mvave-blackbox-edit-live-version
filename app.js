@@ -141,7 +141,7 @@ class MvaveBLEEditor {
       this.selectedEffects = ["mod", "dly", "rev"];
     }
 
-    this.isDottedEighth = false;
+    this.isDottedEighth = true;
     this.baseBpm = 120.0;
     this.tapTimestamps = [];
     this.tapTimeout = null;

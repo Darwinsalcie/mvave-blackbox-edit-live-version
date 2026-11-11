@@ -1286,3 +1286,262 @@ body {
   border-radius: 4px;
   font-family: monospace;
 }
+
+/* =========================================================
+   POCKET MOTION MODE (OLED SCREEN & CALIBRATION)
+   ========================================================= */
+
+.pocket-mode-btn {
+  background: linear-gradient(135deg, #7c4dff, #536dfe);
+  color: #fff;
+  border: 1px solid #9575cd;
+  box-shadow: 0 0 12px rgba(124, 77, 255, 0.4);
+}
+
+.pocket-mode-btn:hover {
+  filter: brightness(1.15);
+}
+
+.pocket-mode-btn:active {
+  transform: scale(0.95);
+}
+
+/* 100% OLED Pitch Black Screen Overlay */
+.pocket-oled-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #000000;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.oled-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+  padding: 30px;
+  color: #33384a;
+}
+
+.oled-badge {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #444c66;
+  border: 1px solid #222638;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+.oled-status {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #606d91;
+  text-shadow: 0 0 10px rgba(96, 109, 145, 0.2);
+}
+
+.oled-value {
+  font-size: 64px;
+  font-weight: 900;
+  color: #8fa0cf;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 20px rgba(143, 160, 207, 0.3);
+}
+
+.oled-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  color: #2b3147;
+}
+
+.oled-unlock-hint {
+  font-size: 12px;
+  color: #3b4360;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Pocket Settings Modal */
+.pocket-modal-card {
+  max-width: 520px;
+}
+
+.pocket-settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.live-val {
+  color: var(--accent-cyan);
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.setting-val {
+  color: var(--accent-green);
+  font-weight: 800;
+}
+
+/* Force Meter Track */
+.force-meter-track {
+  width: 100%;
+  height: 20px;
+  background: #0f121e;
+  border-radius: 10px;
+  border: 1px solid #2e354e;
+  position: relative;
+  overflow: hidden;
+}
+
+.force-meter-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00b0ff, #ffd600, #ff3d00);
+  border-radius: 10px;
+  transition: width 0.05s ease-out;
+}
+
+.force-meter-fill.stomp-flash {
+  filter: brightness(2);
+  box-shadow: 0 0 15px #00e676;
+}
+
+.threshold-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #fff;
+  box-shadow: 0 0 6px #fff;
+  pointer-events: none;
+}
+
+.pocket-slider {
+  width: 100%;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+  height: 8px;
+}
+
+.setting-row-duo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.setting-group-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pocket-select {
+  background: #0d0f19;
+  border: 1px solid #2b324a;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+}
+
+.pocket-check-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #111422;
+  border: 1px solid #293047;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.practice-box {
+  background: #0f121d;
+  border: 1px solid #282f45;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.practice-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.practice-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sim-btn {
+  flex: 1;
+  background: #1c2136;
+  border: 1px solid #384260;
+  color: var(--text-main);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sim-btn:hover {
+  background: #28304f;
+  border-color: var(--accent-cyan);
+}
+
+.sim-btn:active {
+  transform: scale(0.96);
+}
+
+.sim-feedback {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--accent-cyan);
+}
