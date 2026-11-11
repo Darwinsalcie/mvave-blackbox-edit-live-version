@@ -2,6 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*' # Deployment will only trigger when pushing a tag starting with "v" (e.g., v0.1.0)
 
