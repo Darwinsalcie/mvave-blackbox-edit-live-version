@@ -875,6 +875,108 @@ body {
    ORIENTATION ADAPTATION: VERTICAL (PORTRAIT)
    ========================================================= */
 
+@media (max-width: 900px), (orientation: portrait) {
+  .live-header {
+    padding: 6px 8px;
+    height: auto;
+    min-height: 48px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .header-section {
+    gap: 5px;
+  }
+
+  .live-header-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    gap: 4px;
+    height: 32px;
+  }
+
+  .connect-btn .btn-text,
+  .pocket-mode-btn .btn-text,
+  .save-btn .btn-text {
+    display: inline;
+  }
+
+  .status-indicator {
+    padding: 4px 6px;
+    font-size: 11px;
+    height: 32px;
+  }
+
+  .status-text {
+    display: none; /* Hide 'Desconectado' label on small screens, keep dot */
+  }
+
+  .preset-arrow-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .preset-pill {
+    height: 32px;
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .patch-number {
+    font-size: 12px;
+    padding: 1px 4px;
+  }
+
+  .patch-name {
+    font-size: 12px;
+    max-width: 90px;
+  }
+
+  .view-tabs {
+    padding: 2px;
+  }
+
+  .tab-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .icon-tool-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .header-connect {
+    order: 1;
+  }
+
+  .header-preset {
+    order: 2;
+    max-width: 170px;
+  }
+
+  .header-tools {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .tab-btn {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+
+  .live-header-btn {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+}
+
 @media (orientation: portrait) {
   .live-stage {
     padding: 10px;
